@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Braces, CircleDot, Code2, Cpu, Github, Menu, X } from 'lucide-react'
+import { Braces, CircleDot, Code2, Cpu, Github, Menu, Radar, X } from 'lucide-react'
 import type { ContractConfig, TransactionRecord } from './types'
 import { useWallet } from './features/wallet/useWallet'
 import { PRESETS } from './features/contracts/presets'
@@ -7,11 +7,12 @@ import { ContractSetup } from './features/contracts/ContractSetup'
 import { ContractConsole } from './features/contracts/ContractConsole'
 import { parseAbi, validateAddress } from './features/contracts/contractUtils'
 import { PrinterWithdrawal } from './features/withdraw/PrinterWithdrawal'
+import { ListedMachineScanner } from './features/scanner/ListedMachineScanner'
 import { WalletButton } from './components/WalletButton'
 import { Toast } from './components/Toast'
 import { TransactionTray } from './components/TransactionTray'
 
-type View = 'withdraw' | 'console'
+type View = 'withdraw' | 'scanner' | 'console'
 
 function getInitialContract(): ContractConfig {
   try {
@@ -94,6 +95,9 @@ export function App() {
             <button className={view === 'withdraw' ? 'active' : ''} type="button" onClick={() => { setView('withdraw'); setSidebarOpen(false) }}>
               <span><Cpu size={18} /> Machine withdrawal</span><small>Guided</small>
             </button>
+            <button className={view === 'scanner' ? 'active' : ''} type="button" onClick={() => { setView('scanner'); setSidebarOpen(false) }}>
+              <span><Radar size={18} /> Listed V2 scanner</span><small>OpenSea</small>
+            </button>
             <button className={view === 'console' ? 'active' : ''} type="button" onClick={() => { setView('console'); setSidebarOpen(false) }}>
               <span><Code2 size={18} /> Contract console</span><small>Advanced</small>
             </button>
@@ -120,6 +124,12 @@ export function App() {
               networkName={wallet.networkName}
               onConnect={wallet.connect}
               onTransaction={trackTransaction}
+            />
+          ) : view === 'scanner' ? (
+            <ListedMachineScanner
+              provider={wallet.provider}
+              chainId={wallet.chainId}
+              onConnect={wallet.connect}
             />
           ) : (
             <ContractConsole
